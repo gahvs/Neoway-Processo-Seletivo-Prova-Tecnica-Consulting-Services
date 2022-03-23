@@ -15,19 +15,23 @@ TABLES = [
         
         CREATE TABLE IF NOT EXISTS CLIENTE (
             ID bigserial NOT NULL PRIMARY KEY, 
-            CPF varchar(14) NOT NULL UNIQUE, 
+            CPF varchar(14) NOT NULL, 
             CPF_VALIDO boolean NOT NULL,  
             PRIVADO boolean NOT NULL,  
             INCOMPLETO boolean NOT NULL, 
             DATA_ULTIMA_COMPRA DATE, 
             TICKET_MEDIO REAL, 
             TICKET_ULTIMA_COMPRA REAL, 
-            LOJA_MAIS_FREQUENTE bigserial,
-            LOJA_ULTIMA_COMPRA bigserial,
-            FOREIGN KEY(LOJA_MAIS_FREQUENTE) REFERENCES LOJA (ID) ON DELETE CASCADE,
-            FOREIGN KEY(LOJA_ULTIMA_COMPRA) REFERENCES LOJA (ID) ON DELETE CASCADE
+            LOJA_MAIS_FREQUENTE bigint NULL,
+            LOJA_ULTIMA_COMPRA bigint NULL
         ); COMMIT;
 
         """
     }
 ]
+
+# Observações:
+
+# Foi verificado antes da criação do serviço que
+# cada linha do arquivo possui um CPF diferente, portanto não há problemas em usar 
+# um campo tipo UNIQUE para armazená-los.

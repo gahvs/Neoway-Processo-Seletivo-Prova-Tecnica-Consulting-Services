@@ -1,3 +1,4 @@
+from pydoc import cli
 from unicodedata import normalize
 
 FILE_NAME = "base_teste.txt"
@@ -13,15 +14,24 @@ def tratar(linha: str):
     loja_mais_frequente, loja_ultima_compra = linha.split() # Desestruturando string do arquivo usando espaço em branco como separador
 
     # Substituindo 0 / 1 por representações booleanas no Postgres
-    private = 'true' if private else 'false'
-    incompleto = 'true' if incompleto else 'false'  
+    private = "true" if private else "false"
+    incompleto = "true" if incompleto else "false"  
 
     # Substituindo ',' por '.' nos dados que representam moeda, que sejam diferentes de 'NULL',
-    # para permitir conversão de str para float.
-    ticket_medio = float(ticket_medio.replace(',', '.')) if ticket_medio != 'NULL' else 'NULL'
-    ticket_ultima_compra =  float(ticket_ultima_compra.replace(',', '.')) if ticket_ultima_compra != 'NULL' else  'NULL'
+    # para permitir conversão de str para float. Os dados com valor igual a 'NULL' são convertidos para 0.0
+    ticket_medio = float(ticket_medio.replace(',', '.')) if ticket_medio != 'NULL' else 0.0
+    ticket_ultima_compra =  float(ticket_ultima_compra.replace(',', '.')) if ticket_ultima_compra != 'NULL' else  0.0
 
-    return (cpf, private, incompleto, data_ultima_compra, ticket_medio, ticket_ultima_compra, loja_mais_frequente, loja_ultima_compra)
+    return {
+        'cpf':cpf,
+        'private':private,
+        'incompleto':incompleto,
+        'data_ultima_compra':data_ultima_compra,
+        'ticket_medio':ticket_medio,
+        'ticket_ultima_compra':ticket_ultima_compra,
+        'loja_mais_frequente':loja_mais_frequente,
+        'loja_ultima_compra':loja_ultima_compra
+    }
 
 def load_cnpjs() -> list:
     '''
@@ -44,9 +54,24 @@ def load_cnpjs() -> list:
 
     return cnpjs
  
-def carregar_dados():
+def load_clientes() -> list:
+    '''
+        Essa rotina faz a leitura de todas as linhas do arquivo base, armazenando-os (já tratados)
+        em uma lista e devolvendo como retorno.
+
+        OBS: Essa função pode ser modificada para realizar uma verificação se um CPF já não fora lido. 
+        Porém essa verificação aumenta (imensamente) o tempo de execução do algoritmo, portanto foram realizados 
+        testes prévios que mostraram que não existem CPF's repetidos, portanto os dados podem ser persistidos sem uma
+        violação do campo CPF no banco, que é UNIQUE.
+    '''
+    clientes = list()
+    # cpfs_included = list()
     with open(FILE_NAME, mode='r') as file:
-        _ = file.readline() #ignorando header
+        _ = file.readline() # cabeçalho do arquivo ignorado, interesse apenas nos dados
         for linha in file.readlines():
             linha_tratada = tratar(linha)
-            return linha_tratada
+            # if not linha_tratada[0] in cpfs_included:
+                # cpfs_included.append(linha_tratada[0])
+            clientes.append(linha_tratada)
+         
+    return clientes
