@@ -20,17 +20,6 @@ def tratar(linha: str, id: int):
     ticket_medio = float(ticket_medio.replace(',', '.')) if ticket_medio != 'NULL' else 0.0
     ticket_ultima_compra =  float(ticket_ultima_compra.replace(',', '.')) if ticket_ultima_compra != 'NULL' else  0.0
 
-    # return {
-    #     'cpf':cpf,
-    #     'private':private,
-    #     'incompleto':incompleto,
-    #     'data_ultima_compra':data_ultima_compra,
-    #     'ticket_medio':ticket_medio,
-    #     'ticket_ultima_compra':ticket_ultima_compra,
-    #     'loja_mais_frequente':loja_mais_frequente,
-    #     'loja_ultima_compra':loja_ultima_compra
-    # }
-
     return (
         id,
         cpf,
@@ -43,27 +32,6 @@ def tratar(linha: str, id: int):
         loja_ultima_compra
     )
 
-def load_cnpjs() -> list:
-    '''
-        Essa rotina faz a leitura dos CNPJ's contidos nas últimas colunas 
-        do arquivo (LOJA MAIS FREQUÊNTE ,LOJA DA ÚLTIMA COMPRA), armazenando-os em uma lista
-        e retornando-a.
-    '''
-    cnpjs = list()
-    with open(FILE_NAME, mode='r') as file:
-        _ = file.readline() # cabeçalho do arquivo ignorado, interesse apenas nos dados
-        for line in file.readlines():
-            # os cnpjs estão contidos nas duas últimas colunas,
-            # portanto é feito um split usando um espaço em branco como separador
-            # para 'pegar' as duas últimas posições da lista resultante.
-            doc_1, doc_2 = line.split()[-2], line.split()[-1] 
-            # ignoramos CNPJ's nulos, e verificamos se o CNPJ lido já não foi lido
-            # antes, para evitar duplicação de valores
-            if not doc_1 in cnpjs and doc_1 != 'NULL': cnpjs.append(doc_1)
-            if not doc_2 in cnpjs and doc_2 != 'NULL': cnpjs.append(doc_2)
-
-    return cnpjs
- 
 def load_data() -> list:
     '''
         Essa rotina faz a leitura de todas as linhas do arquivo base, armazenando-os (já tratados)
