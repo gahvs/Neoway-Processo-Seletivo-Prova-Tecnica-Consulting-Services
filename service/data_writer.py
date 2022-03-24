@@ -2,32 +2,6 @@ from utils import cnpj_is_valid, cpf_is_valid
 from psql import Interface
 from threading import Thread
 
-def cnpj_already_exists(cnpj: str) -> bool:
-    """
-        Verifica se o CNPJ já existe no banco antes de fazer uma inserção.
-        Evita Unique Violation.
-    """
-    ps = Interface()
-    query = "SELECT ID FROM LOJA WHERE cnpj = '%s'" % cnpj
-    ID_FROM_CNPJ = ps.exec(query=query)
-    ps.close(detail=False)
-    if ID_FROM_CNPJ is None:
-        return False
-    return True
-
-def cpf_already_exists( cpf: str) -> bool: 
-    """
-        Verifica se o CPF já existe no banco de dados antes de fazer uma inserção.
-        Evita Unique Violation
-    """
-    ps = Interface()
-    query = "SELECT ID FROM CLIENTE WHERE cpf = '%s'" % cpf
-    ID_FROM_CPF = ps.exec(query=query)
-    ps.close(detail=False)
-    if ID_FROM_CPF is None:
-        return False
-    return True
-
 def last_id_from(table_name: str) -> int:
     '''
         Retorna o último ID na tabela passada como parâmetro. Se não 
@@ -62,9 +36,9 @@ class LojaWriter():
         query = ''
         LOJA_ID = last_id_from('LOJA') + 1
         for cnpj in self.loja_data:
-            if not cnpj_already_exists(cnpj=cnpj) and cnpj != 'NULL':
+            if cnpj != 'NULL':
                 query += self.query_insert % (LOJA_ID, cnpj, cnpj_is_valid(cnpj))
-                LOJA_ID += 1
+            LOJA_ID += 1
         ps.exec(query)
         print('Dados das lojas inseridos')
         ps.close(detail=False)
