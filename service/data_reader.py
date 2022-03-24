@@ -37,18 +37,14 @@ def load_data() -> list:
         Essa rotina faz a leitura de todas as linhas do arquivo base, armazenando-os (já tratados)
         em uma lista e devolvendo como retorno.
     '''
-    import os
-    print(os.path.dirname(os.path.abspath(__file__)))
+    print('    -'+FILE_NAME)
     id = 1
     data = list()
-    # cpfs_included = list()
     with open(FILE_NAME, mode='r') as file:
         _ = file.readline() # cabeçalho do arquivo ignorado, interesse apenas nos dados
         for linha in file.readlines():
             linha_tratada = tratar(linha, id)
             id = id + 1
-            # if not linha_tratada[0] in cpfs_included:
-                # cpfs_included.append(linha_tratada[0])
             data.append(linha_tratada)
          
     return data

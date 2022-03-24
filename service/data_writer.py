@@ -1,6 +1,5 @@
 from utils import cnpj_is_valid, cpf_is_valid
 from psql import Interface
-from threading import Thread
 
 def last_id_from(table_name: str) -> int:
     '''
@@ -40,12 +39,11 @@ class LojaWriter():
                 query += self.query_insert % (LOJA_ID, cnpj, cnpj_is_valid(cnpj))
                 LOJA_ID += 1
         ps.exec(query)
-        print('Dados das lojas inseridos')
+        print('    -Dados das lojas inseridos')
         ps.close(detail=False)
 
-class ClienteWriter(Thread):
+class ClienteWriter():
     def __init__(self, clientes_data: list) -> None:
-        Thread.__init__(self)
         self.clientes_data = clientes_data
         self.query_insert_with_data_non_null = """ INSERT INTO CLIENTE (id, documento, documento_valido, privado, incompleto, loja_mais_frequente, loja_ultima_compra, data_ultima_compra, ticket_medio,
          ticket_ultima_compra) 
@@ -56,7 +54,7 @@ class ClienteWriter(Thread):
          VALUES ('%d', '%s', %s, %s, %s, %s, %s, %s, '%f', '%f');
         """
     
-    def run(self):
+    def write(self):
         ps = Interface()
         query = ''
         loja_id_map = make_dict_from_loja()
@@ -66,31 +64,5 @@ class ClienteWriter(Thread):
             else:
                 query += self.query_insert_with_data_non_null % (c[0], c[1], cpf_is_valid(c[1]), c[2], c[3], loja_id_map[c[-2]], loja_id_map[c[-1]], c[4], c[5], c[6])
         ps.exec(query=query)
-        print('Dados dos clientes inseridos')
-        ps.close(detail=False)
-
-class CompraWriter(Thread):
-    def __init__(self, clientes_info_data: list) -> None:
-        Thread.__init__(self)
-        self.clientes_info_data = clientes_info_data
-        self.query_insert_with_data_non_null = """ INSERT INTO COMPRA (id, cliente, data_ultima_compra, ticket_medio,
-         ticket_ultima_compra) 
-         VALUES ('%d', '%d', '%s', '%f', '%f');
-        """
-        self.query_insert_with_data_null = """INSERT INTO COMPRA (id, cliente, data_ultima_compra, ticket_medio,
-         ticket_ultima_compra) 
-         VALUES ('%d', '%d', %s, '%f', '%f');
-        """
-    def run(self):
-        ps = Interface()
-        query = ''
-        LAST_ID = last_id_from(table_name='COMPRA') + 1
-        for c in self.clientes_info_data:
-            if c[4] == 'NULL':
-                query += self.query_insert_with_data_null % (LAST_ID, c[0], c[4], c[5], c[6])
-            else:
-                query += self.query_insert_with_data_non_null % (LAST_ID, c[0], c[4], c[5], c[6])
-            LAST_ID += 1
-        ps.exec(query=query)
-        print('Dados das compras inseridos')
+        print('    -Dados dos clientes inseridos')
         ps.close(detail=False)

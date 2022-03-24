@@ -77,11 +77,6 @@ class Interface():
             self.__reconnect()
             return errs.UndefinedColumn
 
-    # def __getColumns(self, table_name: str) -> list:
-    #     for table in TABLES:
-    #         if table['NAME'] == table_name.upper(): return table['COLUMNS']
-    #     return []
-
     def get(self, table_name: str, id: int) -> list:
         if not self.dbIsValid(): self.__reconnect()        
         query_data = "SELECT * FROM %s WHERE ID = %d" % (table_name, id)
