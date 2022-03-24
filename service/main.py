@@ -40,5 +40,5 @@ if __name__ == '__main__':
     init = time.time()
     run_service()
     final = time.time()
-    print('    -Tempo de execução:', final - init)
+    print('    -Tempo de execução:', final - init, 'segundos')
     print('\n\n            ====== SERVICO FINALIZADO  ======           ', end='\n\n')

@@ -33,6 +33,8 @@ Em sua primeira execução este comando pode demorar alguns minutos para ser exe
 ## Visualizar os dados
 Para que possamos visualizar os dados migrados para o nosso PostgreSQL, que está dentro do container Docker,precisamos usar os seguintes comandos no terminal:
 
+
+**Observação**: Utilize outro terminal para executar os comandos abaixo e não feche o terminal onde o docker está sendo executado.
 ```sh
 docker exec -it neoway-db-1 /bin/bash
 ```
