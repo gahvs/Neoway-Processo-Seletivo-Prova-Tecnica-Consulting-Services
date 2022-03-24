@@ -2,6 +2,8 @@ from typing import Any
 import psycopg2
 import psycopg2.errors as errs
 from sys import exit
+from prettytable import PrettyTable
+from consts import TABLES
 
 class Interface():
 
@@ -75,20 +77,29 @@ class Interface():
             self.__reconnect()
             return errs.UndefinedColumn
 
-    def get(self, table_name: str, id: int) -> list:
-        if not self.dbIsValid(): self.__reconnect()
-        query = "SELECT * FROM %s WHERE ID = %d" % (table_name, id)
-        return self.exec(query=query)
+    def __getColumns(self, table_name: str) -> list:
+        for table in TABLES:
+            if table['NAME'] == table_name.upper(): return table['COLUMNS']
+        return []
+
+    def get(self, table_name: str, id: int) -> PrettyTable:
+        if not self.dbIsValid(): self.__reconnect()        
+        table = PrettyTable(self.__getColumns(table_name))
+        query_data = "SELECT * FROM %s WHERE ID = %d" % (table_name, id)
+        table.add_rows(self.exec(query=query_data))
+        return table
 
     def size(self, table_name: str) -> list:
         if not self.dbIsValid(): self.__reconnect()
         query = "SELECT COUNT(ID) FROM %s" % table_name
         return self.exec(query=query)
 
-    def head(self, table_name: str) -> list:
+    def head(self, table_name: str) -> PrettyTable:
         if not self.dbIsValid(): self.__reconnect()
-        query = "SELECT * FROM %s LIMIT 5;" % table_name
-        return self.exec(query=query)
+        table = PrettyTable(self.__getColumns(table_name))
+        query_data = "SELECT * FROM %s LIMIT 5;" % table_name
+        table.add_rows(self.exec(query=query_data))
+        return table
 
     def delete(self, table_name: str) -> bool:
         if not self.dbIsValid(): self.__reconnect()
@@ -116,4 +127,3 @@ class Interface():
             print('Columns of %s' % table_name)
             for c in columns_information:
                 print('    -', c[0],':', c[1])
-

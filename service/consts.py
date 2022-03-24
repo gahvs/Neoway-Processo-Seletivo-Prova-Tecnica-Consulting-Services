@@ -1,6 +1,7 @@
 TABLES = [ 
     {
         'NAME': 'LOJA',
+        'COLUMNS': ["ID", "CNPJ", "CNPJ_VALIDO"],
         'SQL_CREATE': """
             CREATE TABLE IF NOT EXISTS LOJA (
                 ID bigserial NOT NULL PRIMARY KEY, 
@@ -11,6 +12,8 @@ TABLES = [
     }, 
     {
         'NAME': 'CLIENTE',
+        'COLUMNS': ["ID" , "DOCUMENTO" , "DOCUMENTO_VALIDO" ,  "PRIVADO" ,  "INCOMPLETO" ,"LOJA_MAIS_FREQUENTE" ,"LOJA_ULTIMA_COMPRA" ,"DATA_ULTIMA_COMPRA" , "TICKET_MEDIO", "TICKET_ULTIMA_COMPRA",]
+        ,
         'SQL_CREATE': """
         
         CREATE TABLE IF NOT EXISTS CLIENTE (
@@ -20,28 +23,12 @@ TABLES = [
             PRIVADO boolean NOT NULL,  
             INCOMPLETO boolean NOT NULL,
             LOJA_MAIS_FREQUENTE bigint NULL,
-            LOJA_ULTIMA_COMPRA bigint NULL
-        ); COMMIT;
-
-        """
-    },
-    {
-        'NAME': 'COMPRA',
-        'SQL_CREATE': """
-        CREATE TABLE IF NOT EXISTS COMPRA (
-            ID bigserial NOT NULL PRIMARY KEY,
-            CLIENTE bigint NOT NULL,
+            LOJA_ULTIMA_COMPRA bigint NULL,
             DATA_ULTIMA_COMPRA DATE, 
             TICKET_MEDIO REAL, 
             TICKET_ULTIMA_COMPRA REAL
         ); COMMIT;
+
         """
-    }
+    },
 ]
-
-
-# Observações:
-
-# Foi verificado antes da criação do serviço que
-# cada linha do arquivo possui um CPF diferente, portanto não há problemas em usar 
-# um campo tipo UNIQUE para armazená-los.
