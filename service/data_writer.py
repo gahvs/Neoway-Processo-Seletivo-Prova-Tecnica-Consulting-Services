@@ -65,22 +65,24 @@ class CompraWriter(Thread):
     def __init__(self, clientes_info_data: list) -> None:
         Thread.__init__(self)
         self.clientes_info_data = clientes_info_data
-        self.query_insert_with_data_non_null = """ INSERT INTO COMPRA (cliente, data_ultima_compra, ticket_medio,
+        self.query_insert_with_data_non_null = """ INSERT INTO COMPRA (id, cliente, data_ultima_compra, ticket_medio,
          ticket_ultima_compra) 
-         VALUES ('%d', '%s', '%f', '%f');
+         VALUES ('%d', '%d', '%s', '%f', '%f');
         """
-        self.query_insert_with_data_null = """INSERT INTO COMPRA (cliente, data_ultima_compra, ticket_medio,
+        self.query_insert_with_data_null = """INSERT INTO COMPRA (id, cliente, data_ultima_compra, ticket_medio,
          ticket_ultima_compra) 
-         VALUES ('%d', %s, '%f', '%f');
+         VALUES ('%d', '%d', %s, '%f', '%f');
         """
     def run(self):
         ps = Interface()
         query = ''
+        LAST_ID = last_id_from(table_name='COMPRA') + 1
         for c in self.clientes_info_data:
             if c[4] == 'NULL':
-                query += self.query_insert_with_data_null % (c[0], c[4], c[5], c[6])
+                query += self.query_insert_with_data_null % (LAST_ID, c[0], c[4], c[5], c[6])
             else:
-                query += self.query_insert_with_data_non_null % (c[0], c[4], c[5], c[6])
+                query += self.query_insert_with_data_non_null % (LAST_ID, c[0], c[4], c[5], c[6])
+            LAST_ID += 1
         ps.exec(query=query)
         print('Dados das compras inseridos')
         ps.close(detail=False)

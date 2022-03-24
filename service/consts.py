@@ -29,6 +29,7 @@ TABLES = [
         'NAME': 'COMPRA',
         'SQL_CREATE': """
         CREATE TABLE IF NOT EXISTS COMPRA (
+            ID bigserial NOT NULL PRIMARY KEY,
             CLIENTE bigint NOT NULL,
             DATA_ULTIMA_COMPRA DATE, 
             TICKET_MEDIO REAL, 

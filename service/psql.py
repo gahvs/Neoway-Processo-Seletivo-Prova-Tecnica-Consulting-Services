@@ -75,6 +75,26 @@ class Interface():
             self.__reconnect()
             return errs.UndefinedColumn
 
+    def get(self, table_name: str, id: int) -> list:
+        if not self.dbIsValid(): self.__reconnect()
+        query = "SELECT * FROM %s WHERE ID = %d" % (table_name, id)
+        return self.exec(query=query)
+
+    def size(self, table_name: str) -> list:
+        if not self.dbIsValid(): self.__reconnect()
+        query = "SELECT COUNT(ID) FROM %s" % table_name
+        return self.exec(query=query)
+
+    def head(self, table_name: str) -> list:
+        if not self.dbIsValid(): self.__reconnect()
+        query = "SELECT * FROM %s LIMIT 5;" % table_name
+        return self.exec(query=query)
+
+    def delete(self, table_name: str) -> bool:
+        if not self.dbIsValid(): self.__reconnect()
+        query = "DELETE FROM %s; COMMIT;" % table_name
+        return self.exec(query=query)
+
     def drop(self, table_name: str) -> bool:
         if not self.dbIsValid(): self.__reconnect()
         query = 'DROP TABLE %s; COMMIT;' % table_name

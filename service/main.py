@@ -26,11 +26,11 @@ def run_service():
         
         print('Dados lidos, gravando informações no banco de dados ...')
         
-        LW = LojaWriter(cnpjs=cnpjs)
-        LW.start()
+        # LW = LojaWriter(cnpjs=cnpjs)
+        # LW.start()
 
-        CW = ClienteWriter(clientes_data=data)
-        CW.start()
+        # CW = ClienteWriter(clientes_data=data)
+        # CW.start()
 
         CIW = CompraWriter(clientes_info_data=data)
         CIW.start()        
