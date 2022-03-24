@@ -1,5 +1,5 @@
 
-FILE_NAME = "base_teste.txt"
+FILE_NAME = "/code/service/base_teste.txt"
 
 # CPF, PRIVATE, INCOMPLETO, DATA DA ÚLTIMA COMPRA, 
 # TICKET MÉDIO, TICKET DA ÚLTIMA COMPRA,  LOJA MAIS FREQUÊNTE,
@@ -37,6 +37,8 @@ def load_data() -> list:
         Essa rotina faz a leitura de todas as linhas do arquivo base, armazenando-os (já tratados)
         em uma lista e devolvendo como retorno.
     '''
+    import os
+    print(os.path.dirname(os.path.abspath(__file__)))
     id = 1
     data = list()
     # cpfs_included = list()

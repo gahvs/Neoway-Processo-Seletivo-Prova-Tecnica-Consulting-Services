@@ -2,12 +2,12 @@ from typing import Any
 import psycopg2
 import psycopg2.errors as errs
 from sys import exit
-from prettytable import PrettyTable
-from consts import TABLES
+import os
+# from consts import TABLES
 
 class Interface():
 
-    def __init__(self, user='postgres', password='postgres', host='localhost', port=5432, database='postgres') -> None:
+    def __init__(self, user=os.environ.get('POSTGRES_USER'), password=os.environ.get('POSTGRES_PASSWORD'), host='db', port=5432, database=os.environ.get('POSTGRES_NAME')) -> None:
         self.__user = user
         self.__password = password
         self.__host = host
@@ -77,29 +77,25 @@ class Interface():
             self.__reconnect()
             return errs.UndefinedColumn
 
-    def __getColumns(self, table_name: str) -> list:
-        for table in TABLES:
-            if table['NAME'] == table_name.upper(): return table['COLUMNS']
-        return []
+    # def __getColumns(self, table_name: str) -> list:
+    #     for table in TABLES:
+    #         if table['NAME'] == table_name.upper(): return table['COLUMNS']
+    #     return []
 
-    def get(self, table_name: str, id: int) -> PrettyTable:
+    def get(self, table_name: str, id: int) -> list:
         if not self.dbIsValid(): self.__reconnect()        
-        table = PrettyTable(self.__getColumns(table_name))
         query_data = "SELECT * FROM %s WHERE ID = %d" % (table_name, id)
-        table.add_rows(self.exec(query=query_data))
-        return table
+        return self.exec(query=query_data)
 
     def size(self, table_name: str) -> list:
         if not self.dbIsValid(): self.__reconnect()
         query = "SELECT COUNT(ID) FROM %s" % table_name
         return self.exec(query=query)
 
-    def head(self, table_name: str) -> PrettyTable:
+    def head(self, table_name: str) -> list:
         if not self.dbIsValid(): self.__reconnect()
-        table = PrettyTable(self.__getColumns(table_name))
         query_data = "SELECT * FROM %s LIMIT 5;" % table_name
-        table.add_rows(self.exec(query=query_data))
-        return table
+        return self.exec(query=query_data)
 
     def delete(self, table_name: str) -> bool:
         if not self.dbIsValid(): self.__reconnect()

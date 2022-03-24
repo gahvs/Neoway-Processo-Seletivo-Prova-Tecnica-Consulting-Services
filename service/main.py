@@ -2,6 +2,7 @@ from data_reader import load_data
 from data_writer import LojaWriter, ClienteWriter, CompraWriter
 from psql import Interface
 from consts import TABLES
+from os import system
 
 def verify_tables():
     ps = Interface()
