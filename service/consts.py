@@ -5,7 +5,7 @@ TABLES = [
         'SQL_CREATE': """
             CREATE TABLE IF NOT EXISTS LOJA (
                 ID bigserial NOT NULL PRIMARY KEY, 
-                CNPJ varchar(18) NOT NULL UNIQUE, 
+                CNPJ varchar(18) NOT NULL, 
                 CNPJ_VALIDO boolean NOT NULL
             ); COMMIT; 
             """,
