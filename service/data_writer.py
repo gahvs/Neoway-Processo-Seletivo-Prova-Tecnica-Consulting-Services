@@ -1,5 +1,6 @@
 from utils import cnpj_is_valid, cpf_is_valid
 from psql import Interface
+from threading import Thread
 
 def cnpj_already_exists(cnpj: str) -> bool:
     """
@@ -41,60 +42,71 @@ def last_id_from(table_name: str) -> int:
         return 0
     return LAST_ID_IN_TABLE[0][0] # o retorno é no formato [(1,)] (tupla dentro de lista)
 
-def loja_id_from_cnpj(table_name: str, cnpj: str) -> int:
-    '''
-        Retorna o valor do campo ID, da tupla que contem o cnpj 
-        passado como parâmetro na tabela referida.
-    '''
-    if cnpj == 'NULL': return "null"
+def make_dict_from_loja() -> list:
     ps = Interface()
-    query = "SELECT ID FROM %s WHERE CNPJ = '%s'" % (table_name, cnpj)
-    LOJA_ID = ps.exec(query=query)
-    ps.close(detail=False)
-    return LOJA_ID[0][0] # o retorno é no formato [(1,)] (tupla dentro de lista)
+    lojas = ps.exec('SELECT * FROM LOJA')
+    lojas_dict = [{tup[1]: tup[0]} for tup in lojas]
+    lojas_dict = dict()
+    for tup in lojas:
+        lojas_dict[tup[1]] = tup[0] 
+    lojas_dict['NULL'] = 'NULL'
+    return lojas_dict
 
-def write_lojas(table_name:str, cnpjs: list):
-    '''
-        Recebe a lista de CNPJS e persiste os dados na tabela LOJA.
-    '''
-    query_insert = """
-        INSERT INTO %s (id, cnpj, cnpj_valido) VALUES ('%d', '%s', %s)
-    """
-    ps = Interface()
-    for cnpj in cnpjs:
-        if not cnpj_already_exists(cnpj=cnpj):
-            ps.exec(query=query_insert % (table_name, last_id_from(table_name) + 1, cnpj, cnpj_is_valid(cnpj)))
+class LojaWriter():
+    def __init__(self, cnpjs: set) -> None:
+        self.loja_data = cnpjs
+        self.query_insert = """ INSERT INTO LOJA (id, cnpj, cnpj_valido) VALUES ('%d', '%s', %s);"""
+    
+    def start(self):
+        ps = Interface()
+        query = ''
+        LOJA_ID = last_id_from('LOJA') + 1
+        for cnpj in self.loja_data:
+            if not cnpj_already_exists(cnpj=cnpj) and cnpj != 'NULL':
+                query += self.query_insert % (LOJA_ID, cnpj, cnpj_is_valid(cnpj))
+                LOJA_ID += 1
+        ps.exec(query)
+        print('Dados das lojas inseridos')
+        ps.close(detail=False)
 
-    ps.close(detail=False)
+class ClienteWriter(Thread):
+    def __init__(self, clientes_data: list) -> None:
+        Thread.__init__(self)
+        self.clientes_data = clientes_data
+        self.query_insert = """ INSERT INTO CLIENTE (id, documento, documento_valido, privado, incompleto, loja_mais_frequente, loja_ultima_compra) 
+         VALUES ('%d', '%s', %s, %s, %s, %s, %s);
+        """
+    
+    def run(self):
+        ps = Interface()
+        query = ''
+        loja_id_map = make_dict_from_loja()
+        for c in self.clientes_data:
+            query += self.query_insert % (c[0], c[1], cpf_is_valid(c[1]), c[2], c[3], loja_id_map[c[-2]], loja_id_map[c[-1]])
+        ps.exec(query=query)
+        print('Dados dos clientes inseridos')
+        ps.close(detail=False)
 
-def write_clientes(clientes_table_name: str, clientes_data: list, loja_table_name: str):
-    '''
-        Recebe os dados do arquivo base e os persiste no banco de dados.
-    '''
-    query_insert = """
-
-        INSERT INTO %s (id, cpf, cpf_valido, privado, incompleto, data_ultima_compra, ticket_medio,
-         ticket_ultima_compra, loja_mais_frequente, loja_ultima_compra) 
-         VALUES ('%d', '%s', %s, %s, %s, %s, '%f', '%f', %s, %s)
-
-    """
-    ps = Interface()
-    for cliente in clientes_data:
-
-        query=query_insert % (clientes_table_name,
-            last_id_from(table_name=clientes_table_name) + 1, 
-            cliente['cpf'], 
-            cpf_is_valid(cliente['cpf']), 
-            cliente['private'], 
-            cliente['incompleto'],
-            cliente['data_ultima_compra'].lower(), 
-            cliente['ticket_medio'], 
-            cliente['ticket_ultima_compra'], 
-            str(loja_id_from_cnpj(table_name=loja_table_name, cnpj=cliente['loja_mais_frequente'])),
-            str(loja_id_from_cnpj(table_name=loja_table_name, cnpj=cliente['loja_ultima_compra']))
-        )
-
-        # if not cpf_already_exists(cpf=cliente['cpf']):
-        ps.exec(query=query)        
-
-    ps.close(detail=False)
+class CompraWriter(Thread):
+    def __init__(self, clientes_info_data: list) -> None:
+        Thread.__init__(self)
+        self.clientes_info_data = clientes_info_data
+        self.query_insert_with_data_non_null = """ INSERT INTO COMPRA (cliente, data_ultima_compra, ticket_medio,
+         ticket_ultima_compra) 
+         VALUES ('%d', '%s', '%f', '%f');
+        """
+        self.query_insert_with_data_null = """INSERT INTO COMPRA (cliente, data_ultima_compra, ticket_medio,
+         ticket_ultima_compra) 
+         VALUES ('%d', %s, '%f', '%f');
+        """
+    def run(self):
+        ps = Interface()
+        query = ''
+        for c in self.clientes_info_data:
+            if c[4] == 'NULL':
+                query += self.query_insert_with_data_null % (c[0], c[4], c[5], c[6])
+            else:
+                query += self.query_insert_with_data_non_null % (c[0], c[4], c[5], c[6])
+        ps.exec(query=query)
+        print('Dados das compras inseridos')
+        ps.close(detail=False)

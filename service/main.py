@@ -1,5 +1,5 @@
-from data_reader import load_cnpjs, load_clientes
-from data_writer import write_lojas, write_clientes
+from data_reader import load_data
+from data_writer import LojaWriter, ClienteWriter, CompraWriter
 from psql import Interface
 from consts import TABLES
 import time
@@ -18,20 +18,25 @@ def run_service():
     print('Verificando tabelas ...')
     if verify_tables() is True: # PRIMEIRAMENTE GARANTIMOS QUE TEREMOS AS TABELAS CRIADAS NO BANCO DE DADOS
 
-        print('Tabelas encontradas no banco, prosseguindo ...')
-        print('Carregando Dados das lojas ...')
-        cnpjs = load_cnpjs()
-        print('Dados lidas, gravando dados das lojas no banco de dados ...')
-        write_lojas(TABLES[0]['NAME'], cnpjs)
-        print('Dados das lojas gravados, prosseguindo ...')
-        print('Carregando Dados dos clientes ...')
-        clientes = load_clientes()
-        print('Dados carregandos, gravando dados dos clientes no banco de dados ...')
-        write_clientes(clientes_table_name=TABLES[1]['NAME'], clientes_data=clientes, loja_table_name=TABLES[0]['NAME'])
-        print('Dados migradros com sucesso.')
+        print('Tabelas verificadas, lendo dados do arquivo base ...')
+
+        data = load_data()
+        cnpj_col_1 = set(list(map(lambda tup: tup[-2], data)))
+        cnpj_col_2 = set(list(map(lambda tup: tup[-1], data)))
+        cnpjs = set(list(cnpj_col_1) + list(cnpj_col_2))
+        
+        print('Dados lidos, gravando informações no banco de dados ...')
+        
+        LW = LojaWriter(cnpjs=cnpjs)
+        LW.start()
+
+        CW = ClienteWriter(clientes_data=data)
+        CW.start()
+
+        CIW = CompraWriter(clientes_info_data=data)
+        CIW.start()        
+
+        
 
 if __name__ == '__main__':
-    init = time.time()
     run_service()
-    final = time.time()
-    print('\nTempo total de execução:', final - init)

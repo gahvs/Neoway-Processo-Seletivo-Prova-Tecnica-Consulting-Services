@@ -39,6 +39,8 @@ def cpf_is_valid(numbers):
     #  Obtém os números do CPF e ignora outros caracteres
     numeros_cpf = [int(char) for char in numbers if char.isdigit()]
 
+    if len(numeros_cpf) == LENGTH_CNPJ: return cnpj_is_valid(numbers)
+
     #  Verifica se o CPF tem 11 dígitos
     if len(numeros_cpf) != 11:
         return "false"
