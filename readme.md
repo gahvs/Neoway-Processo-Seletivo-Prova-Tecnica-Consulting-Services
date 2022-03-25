@@ -15,6 +15,8 @@ Para execução do serviço é necessário possuir o docker instalado na máquin
 
 Basta seguir as instruções no site para concluir a instalação.
 
+**Observação**: Caso esteja utilizando sistemas operacionais baseados em Unix pode ser necessário usar permissões elevadas em alguns comandos, para isso use `sudo` antes do comando.
+
 #### _2° Passo - Download do Código Fonte_
 Com o Docker instalado o próximo passo é fazer o download do código fonte, isso pode ser feito de várias maneiras, como clonando o repositório usando o Git, mas vamos apenas baixar todos arquivos clicando [aqui](https://github.com/gahvs/Neoway-Processo-Seletivo-Prova-Tecnica-Consulting-Services/archive/refs/heads/main.zip).
 
