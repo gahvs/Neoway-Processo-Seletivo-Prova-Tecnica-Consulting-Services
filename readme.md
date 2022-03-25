@@ -69,6 +69,8 @@ Ative o ambiente virtual
 ```sh
 env\Scripts\activate
 ```
+**Observações**: Estes comandos podem variar de acordo com seu sistema operacional
+
 Instale as dependências do ambiente:
 ```sh
 pip install -r requirements.txt
