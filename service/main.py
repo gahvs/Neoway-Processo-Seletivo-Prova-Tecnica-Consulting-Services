@@ -5,6 +5,11 @@ from consts import TABLES
 import time
 
 def verify_tables():
+    '''
+        Executa as sentenças SQL que criam as tabelas no banco de dados, 
+        caso ainda não tenham sido criadas. 
+        Garante que as tabelas existam no banco antes da execução.
+    '''    
     ps = Interface()
     try:
         for table in TABLES:
@@ -15,21 +20,25 @@ def verify_tables():
         return False
 
 def run_service():
+    '''
+        Função principal do serviço. É ela que irá disparar todas as funções que compõe o serviço.
+    '''
     print('    -Verificando tabelas ...')
-    if verify_tables() is True: # PRIMEIRAMENTE GARANTIMOS QUE TEREMOS AS TABELAS CRIADAS NO BANCO DE DADOS
+    if verify_tables() is True:
 
         print('    -Tabelas verificadas')
         print('    -Lendo dados do arquivo base ...')
 
         data = load_data()
-        cnpj_col_1 = set(list(map(lambda tup: tup[-2], data)))
-        cnpj_col_2 = set(list(map(lambda tup: tup[-1], data)))
-        cnpjs = set(list(cnpj_col_1) + list(cnpj_col_2))
+
+        cnpj_col_1 = set(list(map(lambda tup: tup[-2], data))) # colhe apenas o campo LOJA_MAIS_FREQUENTE
+        cnpj_col_2 = set(list(map(lambda tup: tup[-1], data))) # colhe apenas o campo LOJA_ULTIMA_COMPRA
+        cnpjs = set(list(cnpj_col_1) + list(cnpj_col_2)) # elimina valores repetidos
         
         print('    -Dados lidos, gravando informações no banco de dados ...')
         
         LW = LojaWriter(cnpjs=cnpjs)
-        LW.start()
+        LW.write()
 
         CW = ClienteWriter(clientes_data=data)
         CW.write()

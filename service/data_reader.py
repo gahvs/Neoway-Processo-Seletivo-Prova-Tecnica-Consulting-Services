@@ -5,7 +5,11 @@ FILE_NAME = "/code/service/base_teste.txt"
 # TICKET MÉDIO, TICKET DA ÚLTIMA COMPRA,  LOJA MAIS FREQUÊNTE,
 # LOJA DA ÚLTIMA COMPRA
 
-def tratar(linha: str, id: int):
+def tratar(linha: str, id: int) -> tuple:
+    '''
+        Recebe uma linha do arquivo, realiza o tratamento dos dados e os devolve 
+        em uma tupla.
+    '''
     cpf, private, \
     incompleto, data_ultima_compra, \
     ticket_medio, ticket_ultima_compra, \
@@ -34,8 +38,8 @@ def tratar(linha: str, id: int):
 
 def load_data() -> list:
     '''
-        Essa rotina faz a leitura de todas as linhas do arquivo base, armazenando-os (já tratados)
-        em uma lista e devolvendo como retorno.
+        Essa rotina faz a leitura de todas as linhas do arquivo base, armazenando-as (já tratadas)
+        em uma lista e a devolvendo como retorno.
     '''
     print('    -'+FILE_NAME)
     id = 1
