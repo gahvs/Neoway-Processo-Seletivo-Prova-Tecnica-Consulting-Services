@@ -4,12 +4,14 @@ O código acima implementa um serviço de migração. O objetivo do mesmo é mig
 
 ### _Instalação_
 
-#### _1° Passo - Instalação do Docker_
+#### _1° Passo - Instalação do Docker e Docker Compose_
 
 Para execução do serviço é necessário possuir o docker instalado na máquina, você pode obter o Docker: 
 - [Para Windows](https://docs.docker.com/desktop/windows/install/)
 - [Para Linux](https://docs.docker.com/engine/install/ubuntu/)
 - [Para Mac](https://docs.docker.com/desktop/mac/install/)
+
+Para instalar o Docker Compose siga as instruções do [site oficial](https://docs.docker.com/compose/install/).
 
 Basta seguir as instruções no site para concluir a instalação.
 
