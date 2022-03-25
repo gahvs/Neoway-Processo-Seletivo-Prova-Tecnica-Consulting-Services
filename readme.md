@@ -35,7 +35,7 @@ Em sua primeira execução este comando pode demorar alguns minutos para ser exe
 
 **Observação**: Para melhorar a perfomance de execução, o serviço **não** verifica se os dados do arquivo base já existem nas tabelas do banco de dados, portanto executar o comando acima duas vezes implicará em duplicação dos dados. Para testes é interessante limpar as tabelas antes de uma nova execução.
 ## Visualizar os dados
-Para que possamos visualizar os dados migrados para o nosso PostgreSQL, que está dentro do container Docker,precisamos usar os seguintes comandos no terminal:
+Para que possamos visualizar os dados migrados para o nosso PostgreSQL, que está dentro do container Docker,  precisamos usar os seguintes comandos no terminal:
 
 
 **Observação**: Utilize outro terminal para executar os comandos abaixo e não feche o terminal onde o docker está sendo executado.
@@ -54,7 +54,7 @@ Este comando fará com que o seu terminal passe a se comportar como o terminal d
 ```sh
 psql -h db -U postgres -W
 ```
-Esse comando exigirá uma senha logo em seguida, use **postgres**
+Esse comando exigirá uma senha logo em seguida, use **postgres**. 
 Neste comando estamos dizendo que queremos acessar o banco em "db" como usuário "postgres" (as definições de host, user, password, etc do banco estão escritas no arquivo _docker-compose.yml_).
 
 Uma vez acessado, podemos manipular o banco de dados com os comandos do psql ou com queries SQL. Experimente digitar **`\d`** para listar as tabelas do banco de dados ou **`SELECT * FROM CLIENTE LIMIT 5`** para visualizar as 5 primeiras tuplas da tabela CLIENTE.
