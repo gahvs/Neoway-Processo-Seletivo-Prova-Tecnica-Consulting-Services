@@ -9,7 +9,8 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: "postgres"
-    
+    healthcheck:
+      test: "exit 0"
   service:
     build: service/
     volumes:
@@ -20,5 +21,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     command: python3 /code/service/main.py
