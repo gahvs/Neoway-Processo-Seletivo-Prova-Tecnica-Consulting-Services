@@ -11,7 +11,7 @@ Para execução do serviço é necessário possuir o docker instalado na máquin
 - [Para Linux](https://docs.docker.com/engine/install/ubuntu/)
 - [Para Mac](https://docs.docker.com/desktop/mac/install/)
 
-Para instalar o Docker Compose siga as instruções do [site oficial](https://docs.docker.com/compose/install/).
+[Clique aqui](https://docs.docker.com/compose/install/) para obter o Docker Compose.
 
 Basta seguir as instruções no site para concluir a instalação.
 
