@@ -84,7 +84,7 @@ Para usá-la digite no prompt do Python:
 from psql import Interface
 ps = Interface(user="postgres", password="postgres", host="localhost", port=5432, database="postgres")
 ```
-Uma vez que a seu objeto se conectar ao banco de dados você terá acesso aos métodos abaixo, que podem facilitar a visualização dos dados migrados.
+Uma vez que o seu objeto se conectar ao banco de dados você terá acesso aos métodos abaixo, que podem facilitar a visualização dos dados migrados.
 
 ```
 ps.tables()                # mostra uma lista das tabelas do banco
