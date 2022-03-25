@@ -40,12 +40,20 @@ Para que possamos visualizar os dados migrados para o nosso PostgreSQL, que est�
 
 **Observação**: Utilize outro terminal para executar os comandos abaixo e não feche o terminal onde o docker está sendo executado.
 ```sh
-docker exec -it neoway-db-1 /bin/bash
+docker exec -it nome_do_container /bin/bash
 ```
+
+**Dica**: Para visualizar o nome do seu container digite o comando:
+```sh
+docker ps
+```
+Ele exibirá informações de todos os containers em execução na sua máquina, entre elas o seu nome.
+
 Este comando fará com que o seu terminal passe a se comportar como o terminal do container do PostgreSQL (identificado pelo nome neoway-db-1). Dentro do container nós temos uma instância do PostgreSQL em execução e podemos acessá-la com o comando psql. Para isso devemos digitar:
 ```sh
 psql -h db -U postgres -W
 ```
+Esse comando exigirá uma senha logo em seguida, use **postgres**
 Neste comando estamos dizendo que queremos acessar o banco em "db" como usuário "postgres" (as definições de host, user, password, etc do banco estão escritas no arquivo _docker-compose.yml_).
 
 Uma vez acessado, podemos manipular o banco de dados com os comandos do psql ou com queries SQL. Experimente digitar **`\d`** para listar as tabelas do banco de dados ou **`SELECT * FROM CLIENTE LIMIT 5`** para visualizar as 5 primeiras tuplas da tabela CLIENTE.
