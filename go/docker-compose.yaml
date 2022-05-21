@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+
+  db:
+    image: postgres
+    container_name: c_postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: "exit 0"
+
+  # go:
+  #   build: service/
+  #   volumes:
+  #     - .:/go
+  #   environment:
+  #     - POSTGRES_HOST_AUTH_METHOD=trust
+  #     - POSTGRES_HOST=c_postgres
+  #     - POSTGRES_NAME=postgres
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PORT=5432
+  #     - POSTGRES_PASSWORD=postgres
